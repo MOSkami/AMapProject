@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+		<title></title>
+		<script type="text/javascript" src = "js/jquery/jquery-3.4.1.min.js"></script>
+		<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=b385678529fcaf84412badbb03da4ac5&plugin=AMap.ControlBar"></script> 
+		<script src="https://webapi.amap.com/ui/1.0/main.js"></script>
+		<style>
+			*{
+				margin: 0px;
+				border: none;
+				padding: 0px;
+			}
+			header{
+				position: absolute;
+				z-index: 1;
+				width: 100%;
+				height: 60px;
+				background: #F0F0F0;
+				opacity:0.8;
+				box-shadow:0 0 5px #000;
+			}
+			.showMapDiv{
+				position: relative;
+				z-index: 0;
+				height: 800px;
+			}
+			header h4{
+				width: 100px;
+				margin-left: 45px;
+				line-height: 60px;
+			}
+			
+			/* 开始设置地图infoWindows的样式 */
+			/* .amap-icon img {
+				position: absolute;
+				width: 30px;
+				height: 30px;
+			} */
+
+			/* 设置自定义弹框的标题头部 */
+			div.info-top {
+				position: relative;
+				height: 30px;
+				background:  #fafafa;
+				border-bottom: 1px solid #CCC;
+				border-radius: 5px;
+			}
+			/* 标题头部中的内容 */
+			div.info-top div {
+				height: 24px;
+				margin-right: 42px;
+				padding: 0 10px;
+				overflow: hidden;
+				color: #16B;
+				/* 粗体字 */
+				font-weight: bold;
+				font-size: 14px;
+				line-height: 31px;
+				text-align: left;
+			}
+			/* 头部的关闭按钮 */
+			div.info-top img {
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				width: 8px;
+			}
+			/* 移动到自定义信息框上的关闭图片时,设置样式 */
+			div.info-top img:hover {
+				border : 1px solid #000;
+			   /* box-shadow: 0 0 5px #000; */
+			}
+
+			/* 设置内容部分 */
+			div.info-middle {
+				padding: 15px;
+				font-size: 13px;
+				line-height: 20px;
+			}
+
+			/* 底部 */
+			div.info-bottom {
+				width: 100%;
+				height: 0;
+				text-align: center;
+			}
+
+
+			/* 中间内容部分的table */
+			.info-window-data-table {
+				width: 400px;
+				color: rgb(153, 51, 0);
+			}
+			/* 设置信息框中的标题,比如 公司名称 : 天亮教育  这里就只获取 公司名称 这几个字
+				需要加粗等设置
+				!!! 需要注意,jQuery中我们学过,odd是奇数,并且是从0开始
+				但是这里是从1 开始
+			 */
+			.info-window-data-table tr td:nth-child(odd) {
+				padding-right: 15px;
+				padding-left: 15px;
+				font-weight: bold;
+				text-align: right;
+				/*
+				自定义换行,默认样式不对
+				normal : 使用浏览器默认的换行规则
+				break-all : 允许在单词内换行
+				keep-all : 只能在半角空格或连字符处换行
+				*/
+				word-break: keep-all;
+			}
+			/* 设置点击汽车的时候,弹框中的轨迹回放按钮的样式 */
+			.info-map-btn-group {
+				margin-top: 6px;
+				text-align: right;
+			}
+			/* 结束设置地图infoWindows的样式 */
+		</style>
+	</head>
+	<body>
+		<header>
+			<h4>地图看板</h4>
+		</header>
+		<div class = "showMapDiv" id="showMapDiv"></div>
+	</body>
+
+	<script>
+		//全局变量开始(模拟后台接收到的json数据)
+		var cars=[
+			{
+				carnum: '冀 A 123',
+				speed: 80,
+				longitude: '114.513766',
+				latitude: '37.976922'
+			},
+			{
+				carnum: '冀 A 456',
+				speed: 50,
+				longitude: '114.530259',
+				latitude: '37.972902'
+			},
+		];
+		var companys=[
+			{
+				name: '河北华普信息科技有限公司',
+				motto: '这里是河北华普信息科技有限公司信息描述数据',
+				longitude: '114.489228',// 经度
+				latitude: '38.001813'// 纬度
+			},
+			{
+				name: '天亮教育',
+				motto: '有你,便是晴天,天亮教育,值得信赖!我在天亮教育大家庭等你呦~不见不散',
+				longitude: '114.515189',// 经度
+				latitude: '37.994847'// 纬度
+			},
+		];
+
+		//全局变量结束
+
+		var map;
+		$(function(){
+			console.log("Loading AMap......");
+			map = new AMap.Map('showMapDiv',{
+				resizeEnable: true, //是否监控地图容器尺寸变化
+				rotateEnable:true,
+				pitchEnable:true,
+				zoom: 13,
+				zooms:[3,20],
+				expandZoomRange:true,
+
+				center:[114.521648,37.978053],//其实中心位置
+
+				//rotation:-15,
+				//pitch:75, // 地图俯仰角度，有效范围 0 度- 83 度
+				//viewMode:'3D',//开启3D视图,默认为关闭
+				//buildingAnimation:true,//楼块出现是否带动画
+			});
+
+			AMap.plugin([
+				'AMap.ToolBar',
+				'AMap.Scale',
+				'AMap.OverView',
+				'AMap.MapType',
+				'AMap.Geolocation',
+				'AMap.Geocoder',
+			], function(){
+				// 在图面添加工具条控件，工具条控件集成了缩放、平移、定位等功能按钮在内的组合控件
+				map.addControl(new AMap.ToolBar({
+					offset:new AMap.Pixel(10,70),
+				}));
+
+				// 在图面添加比例尺控件，展示地图在当前层级和纬度下的比例尺
+				map.addControl(new AMap.Scale({
+					offset:new AMap.Pixel(60,30),
+				}));
+
+				// 在图面添加鹰眼控件，在地图右下角显示地图的缩略图
+				//map.addControl(new AMap.OverView({isOpen:true}));
+
+				// 在图面添加类别切换控件，实现默认图层与卫星图、实施交通图层之间切换的控制
+				//map.addControl(new AMap.MapType());
+
+				// 在图面添加定位控件，用来获取和展示用户主机所在的经纬度位置
+				map.addControl(new AMap.Geolocation());
+			});
+
+			//绘制多边形开始
+			var path = [
+				[114.512901,38.001379],
+				[114.52952,38.001662],
+				[114.530259,37.972902],
+				[114.51386,37.971726]
+			];
+			var polygon = new AMap.Polygon({
+				path: path,
+				strokeColor: "#FF33FF",
+				strokeWeight: 6,
+				strokeOpacity: 0.2,
+				fillOpacity: 0.4,
+				fillColor: '#1791fc',
+				zIndex: 50,
+			});
+			map.add(polygon);
+			//绘制多边形结束
+
+
+			/*鼠标点击地图获取坐标开始*/
+			map.on('click', function(e) {
+				console.log(e.lnglat.getLng() + ',' + e.lnglat.getLat());
+			});
+			/*鼠标点击地图获取坐标结束*/
+
+			// 添加覆盖物开始
+
+			var dormitory = new AMap.Marker({
+				map:map,
+				icon: "img/markWater.png",
+				position: [114.514652,37.974063]
+			});
+			//map.add(dormitory);
+			dormitory.on('click',function(e){
+				console.log(e.lnglat.getLng() + ',' + e.lnglat.getLat());
+			});
+
+
+			AMapUI.loadUI(['overlay/AwesomeMarker'], function(AwesomeMarker) {
+
+				var i;
+				//公司遍历
+				var company;
+				var companyMarker;
+				for(i = 0;i < companys.length ;i++){
+					company = companys[i];
+					console.log("company:" + company.longitude +"," + company.latitude);
+					companyMarker = new AwesomeMarker({
+						//设置awesomeIcon
+						awesomeIcon: 'building', //可用的icons参见： http://fontawesome.io/icons/
+
+						//下列参数继承自父类
+						//iconLabel中不能包含innerHTML属性（内部会利用awesomeIcon自动构建）
+						iconLabel: {
+							style: {
+								color: '#333' //设置颜色
+							}
+						},
+						iconStyle: 'orange', //设置图标样式
+
+						//基础的Marker参数
+						map:map,
+						position:[company.longitude,company.latitude]
+					});
+					companyMarker.on('click',async function(event){
+						for(i = 0;i < companys.length ;i++){//循环检索json数据
+							if(companys[i].longitude == this.getPosition().lng && companys[i].latitude == this.getPosition().lat){
+								company = companys[i];
+								break;
+							}
+						}
+						if(i == companys.length){
+							console.log("检索数据失败");
+							return ;
+						}
+						console.log("公司名称：" + company.name);
+						console.log("点击坐标：" + event.lnglat.getLng() + ',' + event.lnglat.getLat());
+						console.log("公司坐标：" + company.longitude + ',' + company.latitude);
+						//console.log(this.getPosition());//读取当前Marker标记坐标
+						var lnglat = [this.getPosition().lng, this.getPosition().lat];
+						var position = await lnglatToPosition(lnglat);
+						console.log("公司地址：" + position);
+						console.log("公司简介：" + company.motto);
+
+						var infoWindow = new AMap.InfoWindow({
+							// 使用自定义窗体
+							isCustom: true,
+							// 偏移量,默认窗体是在障碍物中心,所以调整到上面
+							offset: new AMap.Pixel(16, -45),
+						});
+						var title = "企业名称【"+company.name+"】";
+						var contentTable = $("<table></table>");
+						var companyIntro = $("<tr></tr>");
+						companyIntro.append("<td>公司介绍:</td><td colspan='3'>" + company.motto + "</td>");
+						contentTable.append(companyIntro);
+
+						// 获取经纬度和具体地址
+						var lonlatTr = $("<tr></tr>");
+						lonlatTr.append("<td>经度:</td><td>"+ company.longitude +"</td>");
+						lonlatTr.append("<td>纬度:</td><td>"+ company.latitude +"</td>");
+						contentTable.append(lonlatTr);
+
+						var address = $("<tr></tr>");
+						address.append("<td>详细位置:</td><td colspan='3'>"+ position +"</td>");
+						contentTable.append(address);
+
+						contentTable.addClass('info-window-data-table');
+
+						var infoDiv = createInfoWindows(title,contentTable);
+						//console.log(infoDiv);
+						infoWindow.setContent(infoDiv);
+						infoWindow.open(map, this.getPosition());
+					});
+				}
+				// 小汽车的遍历
+				var car;
+				var carMarker;
+				for(i = 0 ;i < cars.length;i++){
+					car=cars[i];
+					console.log("car:" + car.longitude +"," + car.latitude);
+					carMarker = new AwesomeMarker({
+						//设置awesomeIcon
+						awesomeIcon: 'truck', //可用的icons参见： http://fontawesome.io/icons/
+
+						//下列参数继承自父类
+						//iconLabel中不能包含innerHTML属性（内部会利用awesomeIcon自动构建）
+						iconLabel: {
+							style: {
+								color: '#333' //设置颜色
+							}
+						},
+						iconStyle: 'orange', //设置图标样式
+
+						//基础的Marker参数
+						map:map,
+						position:[car.longitude,car.latitude],
+					});
+					carMarker.on('click',async function(event){
+						for(i = 0;i < cars.length ;i++){//循环检索json数据
+							if(cars[i].longitude == this.getPosition().lng && cars[i].latitude == this.getPosition().lat){
+								car = cars[i];
+								break;
+							}
+						}
+						if(i == cars.length){
+							console.log("检索数据失败");
+							return ;
+						}
+						console.log("车辆牌号：" + car.carnum);
+						console.log("点击坐标：" + event.lnglat.getLng() + ',' + event.lnglat.getLat());
+						console.log("车辆坐标：" + car.longitude + ',' + car.latitude);
+						var lnglat = [this.getPosition().lng, this.getPosition().lat];
+						var position = await lnglatToPosition(lnglat);
+						console.log("客车地址：" + position);
+						console.log("车俩速度：" + car.speed);
+
+						var infoWindow = new AMap.InfoWindow({
+							// 使用自定义窗体
+							isCustom: true,
+							// 偏移量,默认窗体是在障碍物中心,所以调整到上面
+							offset: new AMap.Pixel(16, -45),
+						});
+						var title = "车牌号【" + car.carnum +"】";
+
+						var contentTable = $("<table></table>");
+						var timeAndSpeedTr = $("<tr></tr>");
+						timeAndSpeedTr.append("<td>车速:</td><td>" + car.speed + "km/h</td>");
+						contentTable.append(timeAndSpeedTr);
+
+						// 获取经纬度和具体地址
+						var lonlatTr = $("<tr></tr>");
+						lonlatTr.append("<td>经度:</td><td>"+ car.longitude +"</td>");
+						lonlatTr.append("<td>纬度:</td><td>"+ car.latitude +"</td>");
+						contentTable.append(lonlatTr);
+
+						var address = $("<tr></tr>");
+						address.append("<td>详细位置:</td><td colspan='3'>"+ position +"</td>");
+						contentTable.append(address);
+
+						var actionDiv = $("<div></div>");
+						// 创建一个按钮,用于返回轨迹回放
+						actionDiv.append("<button class='map-btn'>轨迹回放</button>");
+						actionDiv.addClass('info-map-btn-group');
+						contentTable.append($("<tr></tr>").append($("<td colspan='4'></td>").append(actionDiv)));
+
+						contentTable.addClass('info-window-data-table');
+
+						var infoDiv = createInfoWindows(title,contentTable);
+						//console.log(infoDiv);
+						infoWindow.setContent(infoDiv);
+						infoWindow.open(map, this.getPosition());
+
+
+
+					});
+				}
+
+			});
+
+
+			//map.setFitView();//设置自动适应显示想显示的范围区域
+
+			//添加覆盖物结束
+
+
+		});
+
+		function lnglatToPosition(lnglat){
+			return new Promise(function(resolve, reject){
+				var geocoder = new AMap.Geocoder({//逆向地理编码对象
+					radius: 100 ,//范围，默认：500
+					extensions: "all"
+				});
+				geocoder.getAddress(lnglat, function(status, result) {//逆向地理编码服务
+					if (status === 'complete' && result.info === 'OK') {
+						// result为对应的地理位置详细信息
+						// console.log("回调方法：");
+						// console.log(result);
+						resolve(result.regeocode.formattedAddress);
+					}
+				});
+			});
+		}
+
+		/**
+		 * 封装获取内容方法
+		 * 第一个是要显示的内容,是生成的DOM对象
+		 * 第二个参数是窗体的标题
+		 * 返回生成的DOM对象
+		 */
+		function createInfoWindows(title,content){
+			var info = document.createElement('div');
+			info.className = 'custom-info input-card content-window-card ';
+			// 顶部
+			var top = document.createElement('div');
+			var titleD = document.createElement('div');
+			titleD.innerText = title;
+			// 窗体的关闭按键
+			var closeX = document.createElement('img');
+			top.className = 'info-top';
+			// 图像源
+			closeX.src = 'https://webapi.amap.com/images/close2.gif';
+			closeX.onclick = function(){map.clearInfoWindow();};
+			top.appendChild(titleD);
+			top.appendChild(closeX);
+			info.appendChild(top);
+
+			// 定义中部内容
+			var middle = document.createElement('div');
+			middle.className = 'info-middle';
+			// 背景颜色为白色
+			middle.style.backgroundColor = 'white';
+			// 遍历内容,插入到内容区域
+			$(middle).append(content);
+			info.appendChild(middle);
+
+			// 判断是否是汽车,如果是,就添加一个轨迹回放按钮
+			// 获取map-btn,如果是汽车就有,企业就没有
+			var btn = info.getElementsByClassName('map-btn')[0];
+			// 如果不为空,说明是汽车
+			if (btn != null) {
+				$(btn).on('click', function () {
+					// 点击了轨迹回放按钮
+					window.location.href = 'trackPlayback.html?carnum='+ title;
+				});
+			}
+
+			// 定义底部内容 , 那个斜角
+			var bottom = document.createElement('div');
+			bottom.className = 'info-bottom';
+			// 设置相对定位
+			bottom.style.position = 'relative';
+			bottom.style.top = '0px';
+			// 水平居中
+			bottom.style.margin = '0 auto';
+			// 小角的图标
+			var sharp = document.createElement('img');
+			sharp.src = 'https://webapi.amap.com/images/sharp.png';
+			bottom.appendChild(sharp);
+			info.appendChild(bottom);
+			return info;
+		}
+
+
+	</script>
+</html>

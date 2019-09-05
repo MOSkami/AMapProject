@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script type="text/javascript" src="js/jquery/jquery-3.4.1.min.js"></script>
+		<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=b385678529fcaf84412badbb03da4ac5&plugin=AMap.ControlBar,AMap.PolyEditor"></script>
+		<script type="text/javascript" src="js/trackEdit.js"></script>
+		<style>
+			*{
+				margin: 0px;
+				border: none;
+				padding: 0px;
+			}
+			header{
+				position: absolute;
+				z-index: 1;
+				width: 100%;
+				height: 60px;
+				background: #F0F0F0;
+				opacity:0.8;
+				box-shadow:0 0 5px #000;
+			}
+			.showMapDiv{
+				position: relative;
+				z-index: 0;
+				height: 800px;
+			}
+			header h4{
+				width: 100px;
+				margin-left: 45px;
+				line-height: 60px;
+				display: inline;
+			}
+			header div{
+				height: 100%;
+				float: right;
+				margin-right: 45px;
+				display: flex;
+			}
+			header div button{
+				margin: auto 10px;
+				padding: 3px 8px;
+				height: 30px;
+				border-radius: 5px;
+				background-color: #1E9FFF;
+				font-weight: 1000;
+			}
+			header div button:hover{
+				background-color: #007DDB;
+			}
+			
+		</style>
+		<script>
+			var map;
+			$(function(){
+				console.log("Loading AMap......");
+				map = new AMap.Map('showMapDiv',{
+					resizeEnable: true, //是否监控地图容器尺寸变化
+					rotateEnable:true,
+					pitchEnable:true,
+					zoom: 13,
+					zooms:[3,20],
+					expandZoomRange:true,
+					center:[114.521648,37.978053],//其实中心位置
+				});
+				
+				
+				
+			});
+		</script>
+	</head>
+	<body>
+		<header>
+			<h4>轨迹编辑</h4>
+			<div>
+				<button onclick="beginEdit()" type="button">开始绘制</button>
+				<button id="clear" onclick="clearEdit()" type="button">清除</button>
+				<button id="finish" onclick="finish()" type="button">完成</button>
+			</div>
+		</header>
+		<div class = "showMapDiv" id="showMapDiv"></div>
+	</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script type="text/javascript" src="js/jquery/jquery-3.4.1.min.js"></script>
+		<style>
+			/*页面框架开始*/
+			*{
+				margin: 0px;
+				padding: 0px;
+				border: none;
+			}
+			header{
+				height: 80px;
+				background-color: #99CCCC;	
+			}
+			.titleText{
+				position: relative;
+				color: #FFFFFF;
+				left:50px;
+				line-height: 80px;
+			}
+			.container{
+				min-width: 900px;
+				height: 800px;
+			}
+			.sidebarDiv{
+				width: 180px;
+				height: 100%;
+				background-color: #CCFFFF;
+				display: inline-block;
+			}
+			.detailsDiv{
+				float: right;
+				width:calc(100% - 180px);
+				height: 100%;
+				/* background-color:#FF9966; */
+			}
+			.detailsIframe{
+				overflow:visible;
+				width: 100%;
+				height: 100%;
+				/* float:  left; */
+			}
+			footer{
+				height: 100px;
+				background-color: #5e5e5e;
+			}
+			/*页面框架结束*/
+			header h2{
+				width: 100px;
+			}
+			/*导航栏开始*/
+			.nav-div{
+				display: flex;
+				margin: 20px auto;
+				overflow: hidden;
+				width: 100%;
+				height: 90%;
+			}
+			menu {
+			    width: 100%;
+			    overflow: auto;    
+			} 
+			.menu-item {
+			    position: relative;
+			}
+			.menu-item:hover{
+				background: #CCCCFF;
+			}
+			.menu-item > input {
+			    position: absolute;
+			    top: 0;
+			    left: 0;
+			    width: 100%;
+			    height: 46px;
+			    opacity: 0;
+			    cursor: pointer;
+			}
+			menu a {
+				text-decoration: none;
+				color: #000000;
+			    display: block;
+				border-bottom:#C2BE9E solid 1px;
+			    padding: 5px 35px;
+			    font-size: 16px;
+			    line-height: 36px;	
+			}
+			menu a:hover {
+				color: #FF6666;
+			    background: #CCCCC0;
+			}
+			.menu-child {
+			    font-size: 14px;
+			    text-indent: 20px;
+			}
+			.menu-item-list {
+			    max-height: 0;
+			    overflow: hidden;
+			    transition: all .8s ease;
+			}
+			menu :checked + .menu-item-list {
+			    max-height: 500px;
+				background: #CCCCE5;
+			}
+			/*导航栏结束*/
+		
+			
+			
+			
+		</style>
+		<script>
+			
+		</script>
+	</head>
+	<body>
+		<header>
+			<h2 class="titleText">实习地图</h3>
+		</header>
+		<div class="container">
+			<div class = "sidebarDiv">
+				<div class="nav-div">
+					<menu >
+					    <div class="menu-item">
+					        <a class="menu-parent">地图</a>
+					        <input type="checkbox" name="" value="">
+					        <div class="menu-item-list">
+					            <a class="menu-child" href="mapSpectaculars.html" target="detailsFrame">地图看板</a>
+					            <a class="menu-child" href="trackPlayback.html" target="detailsFrame" >轨迹回放</a>
+					            <a class="menu-child" href="trackEdit.html" target="detailsFrame">轨迹编辑</a>
+					        </div>
+					    </div>
+					    <div class="menu-item">
+					        <a class="menu-parent">服务</a>
+					        <input type="checkbox" name="" value="">
+					        <div class="menu-item-list">
+					            <a class="menu-child" href="serviceSearch.html" target="detailsFrame">搜索</a>
+					            <a class="menu-child">子菜单2</a>
+					            <a class="menu-child">子菜单3</a>
+					            <a class="menu-child">子菜单4</a>
+					        </div>
+					    </div>
+						<div class="menu-item">
+						    <a class="menu-parent">菜单</a>
+						    <input type="checkbox" name="" value="">
+						    <div class="menu-item-list"></div>
+						</div>
+						<div class="menu-item">
+						    <a class="menu-parent">菜单</a>
+						    <input type="checkbox" name="" value="">
+						    <div class="menu-item-list"></div>
+						</div>
+						
+					</menu>
+				</div>
+			</div>
+			<div class = "detailsDiv" >
+				<iframe class = "detailsIframe" name = "detailsFrame" ><!-- 内容在此打开 --></iframe>
+			</div>
+		</div>
+		
+		<footer>
+			
+		</footer>
+	</body>
+</html>
