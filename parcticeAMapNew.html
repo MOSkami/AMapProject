@@ -45,7 +45,7 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i
                                 class="iconfont">&#xe67c;</i> 地图 <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a href="mapSpectaculars.html" target="detailsFrame">地图看板</a></li>
+                            <li><a href="mapSpectaculars.html" id="init" target="detailsFrame">地图看板</a></li>
                             <li><a href="trackPlayback.html" target="detailsFrame">轨迹回放</a></li>
                             <li><a href="trackEdit.html" target="detailsFrame">轨迹编辑</a></li>
                         </ul>
@@ -54,7 +54,7 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="iconfont">&#xe63b;</i>
                             服务 <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a href="mapSpectaculars.html" target="detailsFrame">搜索</a></li>
+                            <li><a href="serviceSearch.html" target="detailsFrame">搜索</a></li>
                             <li><a href="trackPlayback.html" target="detailsFrame">子菜单2</a></li>
                             <li><a href="trackEdit.html" target="detailsFrame">子菜单3</a></li>
                             <li><a href="trackEdit.html" target="detailsFrame">子菜单4</a></li>
@@ -149,7 +149,7 @@
         <div id="detailsDiv">
 
             <div class="detailsDiv">
-                <iframe class = "detailsIframe" name = "detailsFrame" ><!-- 内容在此打开 --></iframe>
+                <iframe class = "detailsIframe" name = "detailsFrame" src="mapSpectaculars.html"><!-- 内容在此打开 --></iframe>
             </div><!-- /.row -->
 
         </div><!-- /#page-wrapper -->
@@ -161,6 +161,11 @@
     <script src="js/bootstrap/bootstrap.js"></script>
 <!--    &lt;!&ndash; Page Specific Plugins &ndash;&gt;-->
     <script src="js/tablesorter/jquery.tablesorter.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            $('#init').click();
+        })
+    </script>
 <!--    <script src="../js/tablesorter/tables.js"></script>-->
 <!--    <script src="../js/plugins/vue.min.js"></script>-->
 <!--    &lt;!&ndash;    <script src="https://cdn.bootcss.com/vue/2.4.2/vue.min.js"></script>&ndash;&gt;-->

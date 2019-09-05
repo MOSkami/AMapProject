@@ -20,7 +20,7 @@ $(function () {
     // 程序刚开始,应该要先轨迹,再进行回放,所以这里设置为false
     changeShow(false);
 
-    console.log("Loading AMap......");
+    // 初始化地图
     map = new AMap.Map('showMapDiv',{
         resizeEnable: true, //是否监控地图容器尺寸变化
         rotateEnable:true,
@@ -75,7 +75,9 @@ function finish() {
         // 清空路线的数组
         lineArr = [];
         // 获取绘制的行驶路线
-        var items = overlays[0].G.path;
+        console.log(JSON.stringify(overlays))
+        var items = overlays[0].B.path;
+        console.log(overlays[0])
         for(var i = 0;i<items.length;i++){
             var item = items[i];
             // 把经纬度添加到路线数组中
@@ -187,6 +189,7 @@ function changeSpeed() {
  * @return {[type]} [description]
  */
 function beginEdit() {
+    map.setZoom(13); //设置地图层级
     // 设置开始动画等按钮不显示,显示完成和清除
     changeShow(false);
     // 判断覆盖物是否存在,如果存在就删除

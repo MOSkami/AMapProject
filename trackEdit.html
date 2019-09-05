@@ -4,8 +4,9 @@
 		<meta charset="utf-8">
 		<title></title>
 		<script type="text/javascript" src="js/jquery/jquery-3.4.1.min.js"></script>
-		<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=b385678529fcaf84412badbb03da4ac5&plugin=AMap.ControlBar,AMap.PolyEditor"></script>
+		<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=b385678529fcaf84412badbb03da4ac5&plugin=AMap.ControlBar,AMap.Geocoder,AMap.PolyEditor,AMap.MouseTool"></script>
 		<script type="text/javascript" src="js/trackEdit.js"></script>
+		<link href="css/bootstrap.css" rel="stylesheet">
 		<style>
 			*{
 				margin: 0px;
@@ -16,7 +17,7 @@
 				position: absolute;
 				z-index: 1;
 				width: 100%;
-				height: 60px;
+				height: 90px;
 				background: #F0F0F0;
 				opacity:0.8;
 				box-shadow:0 0 5px #000;
@@ -26,57 +27,59 @@
 				z-index: 0;
 				height: calc(100vh);
 			}
-			header h4{
+			header>span{
+				font-size: 20px;
 				width: 100px;
 				margin-left: 45px;
-				line-height: 60px;
+				line-height: 80px;
 				display: inline;
+				position: absolute;
 			}
-			header div{
+			header>div{
 				height: 100%;
+				margin: 3px;
 				float: right;
-				margin-right: 45px;
-				display: flex;
+				margin-right: 25px;
+
 			}
-			header div button{
-				margin: auto 10px;
-				padding: 3px 8px;
-				height: 30px;
+			header>div>div{
+				height: 40px;
+			}
+			header>div>div>div{
+				height: 80px;
+				padding: 20px;
+				float:right;
+			}
+			header div div input{
+				width: 68px;
+				height: 26px;
+				margin: 2px 5px;
 				border-radius: 5px;
-				background-color: #1E9FFF;
-				font-weight: 1000;
 			}
-			header div button:hover{
-				background-color: #007DDB;
+			button{
+				height:40px;
+				height: 40px;
 			}
-			
+
 		</style>
-		<script>
-			var map;
-			$(function(){
-				console.log("Loading AMap......");
-				map = new AMap.Map('showMapDiv',{
-					resizeEnable: true, //是否监控地图容器尺寸变化
-					rotateEnable:true,
-					pitchEnable:true,
-					zoom: 13,
-					zooms:[3,20],
-					expandZoomRange:true,
-					center:[114.521648,37.978053],//其实中心位置
-				});
-				
-				
-				
-			});
-		</script>
 	</head>
 	<body>
 		<header>
-			<h4>轨迹编辑</h4>
+			<span>轨迹编辑</span>
 			<div>
-				<button onclick="beginEdit()" type="button">开始绘制</button>
-				<button id="clear" onclick="clearEdit()" type="button">清除</button>
-				<button id="finish" onclick="finish()" type="button">完成</button>
+				<div class="map-input-card">
+					<div>
+						<button class="btn btn-primary" onclick="beginEdit()">开始绘制</button>
+						<button class="btn btn-primary" id="clear" onclick="clearEdit()">清除</button>
+						<button class="btn btn-primary" id="finish" onclick="finish()">完成</button>
+						<d id="actionContainer">
+							<button hidden="hidden"  class="btn btn-primary" onclick="startAnimation()">开始动画</button>
+							<button hidden="hidden"  class="btn btn-primary" onclick="pauseAnimation()">暂停动画</button>
+							<button hidden="hidden"  class="btn btn-primary" onclick="resumeAnimation()">继续动画</button>
+							<button hidden="hidden"  class="btn btn-primary" onclick="stopAnimation()">停止动画</button>
+						</d>
+					</div>
+				</div>
 			</div>
 		</header>
 		<div class = "showMapDiv" id="showMapDiv"></div>
