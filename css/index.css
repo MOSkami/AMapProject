@@ -1,0 +1,32 @@
+.detailsIframe{
+    overflow:visible;
+    width: 100%;
+    height: 100%;
+    /* float:  left; */
+}
+.dateTable{
+    width: 100%;
+}
+.btns{
+    text-align: center;
+}
+
+.add-node-td{
+    text-align: center;
+    height: 30px;
+    background: #dfdfff !important;
+}
+.detailsDiv{
+    width:100%;
+    height: calc(94.6vh);
+    /* background-color:#FF9966; */
+}
+@font-face {
+    font-family: 'iconfont';  /* project id 390906 */
+    src: url('//at.alicdn.com/t/font_390906_z8g3iiqjyd.eot');
+    src: url('//at.alicdn.com/t/font_390906_z8g3iiqjyd.eot?#iefix') format('embedded-opentype'),
+    url('//at.alicdn.com/t/font_390906_z8g3iiqjyd.woff2') format('woff2'),
+    url('//at.alicdn.com/t/font_390906_z8g3iiqjyd.woff') format('woff'),
+    url('//at.alicdn.com/t/font_390906_z8g3iiqjyd.ttf') format('truetype'),
+    url('//at.alicdn.com/t/font_390906_z8g3iiqjyd.svg#iconfont') format('svg');
+}

@@ -6,6 +6,7 @@
 		<script src="js/jquery/jquery-3.4.1.min.js"></script>
 		<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=b385678529fcaf84412badbb03da4ac5&plugin=AMap.ControlBar,AMap.PolyEditor"></script>
 		<script type="text/javascript" src="js/trackPlayback.js"></script>
+		<link href="css/bootstrap.css" rel="stylesheet">
 		<style>
 			*{
 				margin: 0px;
@@ -16,7 +17,7 @@
 				position: absolute;
 				z-index: 1;
 				width: 100%;
-				height: 60px;
+				height: 90px;
 				background: #F0F0F0;
 				opacity:0.8;
 				box-shadow:0 0 5px #000;
@@ -24,63 +25,59 @@
 			.showMapDiv{
 				position: relative;
 				z-index: 0;
-				height: 800px;
+				height: calc(100vh);
 			}
-			header h4{
+			header>span{
+				font-size: 20px;
 				width: 100px;
 				margin-left: 45px;
-				line-height: 60px;
+				line-height: 80px;
 				display: inline;
+				position: absolute;
 			}
 			header>div{
 				height: 100%;
+				margin: 3px;
 				float: right;
-				margin-right: 45px;
+				margin-right: 25px;
 				
 			}
-			header div div{
-				height: 30px;
-				width: 500px; 
-				font-weight: 1000;
+			header>div>div{
+				height: 40px;
+			}
+			header>div>div>div{
+				height: 40px;
+				float:right;
 			}
 			header div div input{
 				width: 68px;
 				height: 26px;
 				margin: 2px 5px;
 				border-radius: 5px;
-				font-weight: 1000;
-			}
-			header div div button{
-				/* width: 200px; */
-				height: 26px;
-				margin: 2px 5px;
-				padding: 3px 8px;
-				border-radius: 5px;
-				background-color: #1E9FFF;
-				font-weight: 1000;
-			}
-			header div button:hover{
-				background-color: #007DDB;
 			}
 			
 		</style>
 	</head>
 	<body>
 		<header>
-			<h4>轨迹回放</h4>
+			<span>轨迹回放</span>
 			<div>
 				<div class="map-input-card">
-					<em>速&nbsp;度&nbsp;:</em>
-					<input id="speedInput" onchange="changeSpeed()"/>
-                    <button onclick="startAnimation()">开始动画</button>
-                    <button onclick="pauseAnimation()">暂停动画</button>
-                    <button onclick="resumeAnimation()">继续动画</button>
-                    <button onclick="stopAnimation()">停止动画</button>
+					<div>
+						<em>速&nbsp;度&nbsp;:</em>
+						<input id="speedInput" onchange="changeSpeed()"/>
+						<button class="btn btn-primary" onclick="startAnimation()">开始动画</button>
+						<button class="btn btn-primary" onclick="pauseAnimation()">暂停动画</button>
+						<button class="btn btn-primary" onclick="resumeAnimation()">继续动画</button>
+						<button class="btn btn-primary" onclick="stopAnimation()">停止动画</button>
+					</div>
                 </div>
                 <div class="map-input-card" >
-                    <em>电&nbsp;子&nbsp;围&nbsp;栏&nbsp;设&nbsp;置&nbsp;:</em>
-                    <button class="map-btn" onclick="edit()">开始编辑</button>
-                    <button class="map-btn" onclick="closeEdit()">结束编辑</button>
+					<div>
+						<em >电&nbsp;子&nbsp;围&nbsp;栏&nbsp;设&nbsp;置&nbsp;:</em>
+						<button class="btn btn-primary"onclick="edit()">开始编辑</button>
+						<button class="btn btn-primary"onclick="closeEdit()">结束编辑</button>
+					</div>
                 </div>
 			</div>
 		</header>
