@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+		<script type="text/javascript" src="js/jquery/jquery-3.4.1.min.js"></script>
+		<script src="https://cache.amap.com/lbs/static/es5.min.js"></script>
+		<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=b385678529fcaf84412badbb03da4ac5&plugin=AMap.ControlBar,AMap.PolyEditor"></script>
+		<script type="text/javascript" src="js/trackEdit.js"></script>
+		<style>
+			*{
+				margin: 0px;
+				border: none;
+				padding: 0px;
+			}
+			header{
+				position: absolute;
+				z-index: 1;
+				width: 100%;
+				height: 60px;
+				background: #F0F0F0;
+				opacity:0.8;
+				box-shadow:0 0 5px #000;
+			}
+			.showMapDiv{
+				position: relative;
+				z-index: 0;
+				height: calc(100vh);
+			}
+			header h4{
+				width: 100px;
+				margin-left: 45px;
+				line-height: 60px;
+				display: inline;
+			}
+			header div{
+				height: 100%;
+				float: right;
+				margin-right: 45px;
+				display: flex;
+			}
+			header div button{
+				margin: auto 10px;
+				padding: 3px 8px;
+				height: 30px;
+				border-radius: 5px;
+				background-color: #1E9FFF;
+				font-weight:900;
+			}
+			header div button:hover{
+				background-color: #007DDB;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<!--<h4>轨迹编辑</h4>
+			<div class="info" id="text">-->
+			</div>
+
+			<div>
+				<button id="marke" type="button">开始绘制</button>
+				<button id="clear"  type="button">结束绘制</button>
+			</div>
+		</header>
+		<div class = "showMapDiv" id="showMapDiv"></div>
+
+		<div class="input-card" style="width:10rem">
+			<h4>官方默认自定义样式</h4>
+			<div id="map-styles">
+				<div class="input-item">
+					<input type='radio' name='mapStyle' >
+					<span>标准</span>
+					<!--<span class="input-text">normal</span>-->
+				</div>
+				<div class="input-item"><input type='radio' name='mapStyle' value='dark'><span>幻影黑</span></div>
+				<div class="input-item"><input type='radio' name='mapStyle' value='light'><span>月光银</span></div>
+				<div class="input-item"><input type='radio' name='mapStyle' value='whitesmoke' checked><span>远山黛</span></div>
+				<div class="input-item"><input type='radio' name='mapStyle' value='fresh'><span>草色青</span></div>
+				<div class="input-item"><input type='radio' name='mapStyle' value='grey'><span>雅士灰</span></div>
+				<div class="input-item"><input type='radio' name='mapStyle' value='graffiti'><span>涂鸦</span></div>
+				<div class="input-item"><input type='radio' name='mapStyle' value='macaron'><span>马卡龙</span></div>
+				<div class="input-item"><input type='radio' name='mapStyle' value='blue'><span>靛青蓝</span></div>
+				<div class="input-item"><input type='radio' name='mapStyle' value='darkblue'><span>极夜蓝</span></div>
+				<div class="input-item"><input type='radio' name='mapStyle' value='wine'><span>酱籽</span></div>
+			</div>
+		</div>
+
+
+
+
+	</body>
+	<script>
+        var map;
+        var polyEditor ;
+        $(function(){
+            console.log("Loading AMap......");
+            map = new AMap.Map('showMapDiv',{
+                resizeEnable: true, //是否监控地图容器尺寸变化
+                rotateEnable:true,
+                pitchEnable:true,
+                zoom: 13,
+                zooms:[3,20],
+                expandZoomRange:true,
+                center:[114.5222568512,37.9776272402],//其实中心位置
+                mapStyle: "amap://styles/whitesmoke"
+            });
+
+            var path = [
+                [114.5138454437,37.9822615391],
+                [114.5294666290,37.9827012748],
+                [114.5297241211,37.9728911580],
+                [114.5140171051,37.9719439049],
+                [114.5138454437,37.9822615391]
+            ];
+
+            var marker1 = new AMap.Marker({
+                icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+                position:  [114.5138454437,37.9822615391]
+            });
+            var marker2 = new AMap.Marker({
+                icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+                position:  [114.5294666290,37.9827012748],
+            });
+            var marker3 = new AMap.Marker({
+                icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+                position:  [114.5297241211,37.9728911580],
+            });
+            var marker4 = new AMap.Marker({
+                icon: "https://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+                position:   [114.5140171051,37.9719439049],
+            });
+
+            polyline = new AMap.Polyline({
+                path:path,
+                isOutline: true,
+                outlineColor: '#3554ff',
+                borderWeight: 3,
+                strokeColor: "#ff5a49",
+                strokeOpacity: 1,
+                strokeWeight: 6,
+                // 折线样式还支持 'dashed'
+                strokeStyle: "dashed",
+                // strokeStyle是dashed时有效
+                strokeDasharray: [10, 5],
+                lineJoin: 'round',
+                lineCap: 'round',
+                zIndex: 50,
+            })
+
+            polyline.setMap(map)
+            // 缩放地图到合适的视野级别
+            map.setFitView([ polyline ])
+
+            function showInfoOpen(){
+              /*  var text = ''
+                document.querySelector("#text").innerText = text;*/
+            }
+            function showInfoClose(){
+             /*   var text = ''
+                document.querySelector("#text").innerText = text;*/
+            }
+
+            function openInfo() {
+                //构建信息窗体中显示的内容
+                var info = [];
+                info.push("<div><div ><img style=\"float:left;  \" src=\" https://webapi.amap.com/images/autonavi.png \"/></div> ");
+                info.push("<b  style=\" width:800px;   Height:50px; font-size: 50px; \">我的大学</b>");
+                info.push("</div>");
+                infoWindow = new AMap.InfoWindow({
+                    content: info.join("<br/>")  //使用默认信息窗体框样式，显示信息内容
+                });
+                infoWindow.on('open',showInfoOpen)
+                infoWindow.on('close',showInfoClose)
+                infoWindow.open(map, [114.5222568512,37.9776272402]);
+
+            }
+
+            $("#marke").bind("click",function(){
+                polyEditor = new AMap.PolyEditor(map, polyline);
+                polyEditor.open();
+
+                map.add(marker1);
+                map.add(marker2);
+                map.add(marker3);
+                map.add(marker4);
+                map.setFitView();
+                openInfo();
+
+            });
+
+            function closeInfo() {
+                infoWindow.close();
+            }
+
+            $("#clear").bind("click",function(){
+                polyEditor.close()
+
+                map.remove(marker1);
+                map.remove(marker2);
+                map.remove(marker3);
+                map.remove(marker4);
+                map.setFitView();
+                closeInfo();
+            });
+
+
+            //绑定radio点击事件
+            var radios = document.querySelectorAll("#map-styles input");
+            radios.forEach(function(ratio) {
+                ratio.onclick = setMapStyle;
+            });
+
+            function setMapStyle() {
+                var styleName = "amap://styles/" + this.value;
+                map.setMapStyle(styleName);
+            }
+
+
+        });
+
+	</script>
+
+</html>
